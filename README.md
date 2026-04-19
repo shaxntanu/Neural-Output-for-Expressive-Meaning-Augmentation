@@ -1,36 +1,53 @@
 # NOEMA
 
-A next-generation biosignal communication research initiative.
+A biosignal intelligence research initiative focused on silent communication and adaptive human interfaces.
+
+---
 
 ## Overview
 
-NOEMA explores silent communication and adaptive interfaces using measurable human biosignals such as neural, physiological, and behavioral signals.
+NOEMA explores how measurable human biosignals such as neural, physiological, and behavioral signals may be translated into meaningful intent, state, and control outputs. The project focuses on practical, non-invasive communication systems rather than unrealistic thought-reading claims.
 
-## Focus Areas
+## Core Research Themes
 
 - Silent communication systems
 - Intent detection
 - State-aware interfaces
-- Assistive interaction
-- Human-machine communication
+- Assistive human-machine interaction
+- Wearable neurotechnology
+- Embedded intelligence
 
-## Repository Purpose
-
-This repository tracks documentation, experiments, hardware iterations, and research progress.
-
-## Current Status
-
-Early-stage research and architecture development.
-
-## Roadmap
+## Current Focus
 
 - Concept validation
 - Sensor stack selection
-- Prototype development
-- Signal experiments
-- Model training
-- Research publication
+- Signal acquisition architecture
+- Prototype planning
+- Experimental framework
+
+## Repository Scope
+
+- Documentation
+- Literature notes
+- Hardware iterations
+- Firmware prototypes
+- Experiments
+- Research paper development
+
+## Design Philosophy
+
+- Practical over speculative
+- Low-cost over inaccessible
+- Measurable over assumed
+
+## Status
+
+Early-stage research and development.
+
+## Confidentiality Note
+
+Detailed implementation methods may remain private during active development.
 
 ---
 
-Detailed implementation data may remain private during active development.
+**NOEMA** — Internal signals, external meaning.

@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="media/diagrams/NOEMA Infographic.png" alt="NOEMA Infographic" width="800">
+</div>
+
 # NOEMA
 
 A biosignal intelligence research initiative focused on silent communication and adaptive human interfaces.

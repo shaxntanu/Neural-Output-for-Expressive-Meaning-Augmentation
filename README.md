@@ -54,4 +54,4 @@ Detailed implementation methods may remain private during active development.
 
 ---
 
-**NOEMA** — Internal signals, external meaning.
+**NOEMA** - Internal signals, external meaning.

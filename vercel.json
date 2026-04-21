@@ -1,5 +1,0 @@
-{
-    "buildCommand": "cd web-simulation && npm install && npm run build",
-    "outputDirectory": "web-simulation/dist",
-    "installCommand": "cd web-simulation && npm install"
-}

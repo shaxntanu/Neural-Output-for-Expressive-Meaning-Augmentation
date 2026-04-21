@@ -90,7 +90,7 @@ export class SignalGenerator {
     return signal + noise;
   }
 
-  private generateTemporalChannel(state: SignalState, _baseFreq: number, amplitude: number, noise: number): number {
+  private generateTemporalChannel(state: SignalState, baseFreq: number, amplitude: number, noise: number): number {
     let signal = Math.sin(this.time * baseFreq * 0.9) * amplitude;
 
     // Language/internal processing
@@ -105,7 +105,7 @@ export class SignalGenerator {
     return signal + noise;
   }
 
-  private generatePhysiologicalChannel(state: SignalState, baseFreq: number, amplitude: number, noise: number): number {
+  private generatePhysiologicalChannel(state: SignalState, _baseFreq: number, amplitude: number, noise: number): number {
     let signal = Math.sin(this.time * 1.2) * amplitude; // Heart rate-like
 
     // Eyes closed increases alpha

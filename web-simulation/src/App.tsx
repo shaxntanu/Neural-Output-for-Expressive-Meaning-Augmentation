@@ -98,17 +98,17 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-gray-100">
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl">
-        <div className="max-w-[1800px] mx-auto px-6 py-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-neural-600 to-purple-600">
-              <Brain size={32} className="text-white" />
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-neural-600 to-purple-600">
+              <Brain size={24} className="sm:w-8 sm:h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-neural-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-neural-400 to-purple-400 bg-clip-text text-transparent">
                 NOEMA Signal Sandbox
               </h1>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-xs sm:text-sm text-gray-400 mt-0.5 sm:mt-1 hidden sm:block">
                 Synthetic Biosignal Visualization for Cognitive State Prototyping
               </p>
             </div>
@@ -117,10 +117,10 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[1800px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="max-w-[1800px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Left Panel - Controls */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 space-y-4 sm:space-y-6">
             <ControlPanel
               state={state}
               onStateChange={handleStateChange}
@@ -133,7 +133,7 @@ function App() {
           </div>
 
           {/* Right Panel - Visualizations */}
-          <div className="lg:col-span-9 space-y-6">
+          <div className="lg:col-span-9 space-y-4 sm:space-y-6">
             {/* Disclaimer */}
             <DisclaimerPanel />
 
@@ -141,7 +141,7 @@ function App() {
             <AnalyticsPanel analytics={analytics} />
 
             {/* Signal Charts */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               <SignalChart
                 data={signalData}
                 title="Frontal Channel"
@@ -169,7 +169,7 @@ function App() {
             </div>
 
             {/* Brain Visualization and Explanation */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               <BrainVisualization state={state} />
               <ExplanationPanel state={state} />
             </div>
@@ -180,7 +180,7 @@ function App() {
       {/* Footer */}
       <footer className="border-t border-white/10 bg-black/20 backdrop-blur-xl mt-12">
         <div className="max-w-[1800px] mx-auto px-6 py-6 text-center text-sm text-gray-500">
-          <p>NOEMA Signal Sandbox © 2024 | Research Prototype | Synthetic Data Only</p>
+          <p>NOEMA Signal Sandbox © {new Date().getFullYear()} | Research Prototype | Synthetic Data Only</p>
         </div>
       </footer>
     </div>

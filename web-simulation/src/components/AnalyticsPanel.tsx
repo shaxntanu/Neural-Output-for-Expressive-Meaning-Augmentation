@@ -48,20 +48,20 @@ export const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ analytics }) => 
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
       {metrics.map((metric) => {
         const Icon = metric.icon;
         const percentage = Math.round(metric.value * 100);
         
         return (
-          <div key={metric.label} className="glass rounded-2xl p-5 hover:bg-white/10 transition-all">
-            <div className="flex items-center gap-3 mb-3">
-              <div className={`p-2 rounded-lg bg-gradient-to-br ${metric.color}`}>
-                <Icon size={20} className="text-white" />
+          <div key={metric.label} className="glass rounded-2xl p-4 sm:p-5 hover:bg-white/10 transition-all">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className={`p-1.5 sm:p-2 rounded-lg bg-gradient-to-br ${metric.color}`}>
+                <Icon size={16} className="sm:w-5 sm:h-5 text-white" />
               </div>
-              <div className="flex-1">
-                <div className="text-xs text-gray-400 mb-1">{metric.label}</div>
-                <div className="text-2xl font-bold text-white">
+              <div className="flex-1 min-w-0">
+                <div className="text-xs text-gray-400 mb-1 truncate">{metric.label}</div>
+                <div className="text-xl sm:text-2xl font-bold text-white">
                   {metric.displayValue || `${percentage}%`}
                 </div>
               </div>

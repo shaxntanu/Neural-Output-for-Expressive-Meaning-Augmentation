@@ -1,5 +1,5 @@
 import React from 'react';
-import { SignalState, CognitiveIntent, EmotionalState, EyeState } from '../types';
+import { SignalState, CognitiveIntent, EmotionalState } from '../types';
 import { Play, Pause, Zap, Activity, Shuffle } from 'lucide-react';
 
 interface ControlPanelProps {

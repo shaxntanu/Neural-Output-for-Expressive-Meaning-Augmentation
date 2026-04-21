@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SignalState, SignalDataPoint, Analytics, CognitiveIntent, EmotionalState } from './types';
 import { SignalGenerator } from './utils/signalGenerator';
 import { calculateAnalytics } from './utils/analytics';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Analytics } from '../types';
-import { TrendingUp, Brain, Activity, Waves, Target, Zap, Eye, EyeOff } from 'lucide-react';
+import { TrendingUp, Brain, Activity, Waves, Target, Zap, Eye } from 'lucide-react';
 
 interface AnalyticsPanelProps {
   analytics: Analytics;

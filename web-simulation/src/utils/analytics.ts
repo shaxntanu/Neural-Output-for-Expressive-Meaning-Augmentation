@@ -8,7 +8,7 @@ export function calculateAnalytics(state: SignalState, recentData: SignalDataPoi
   const noiseRatio = state.noiseLevel / 100;
   const intentConfidence = calculateIntentConfidence(state);
   const alphaBetaRatio = calculateAlphaBetaRatio(state);
-  const bandPowers = estimateBandPowers(state, recentData);
+  const bandPowers = estimateBandPowers(state);
 
   return {
     stressIndex,
@@ -163,7 +163,7 @@ function calculateAlphaBetaRatio(state: SignalState): number {
   return Math.max(ratio, 0.1);
 }
 
-function estimateBandPowers(state: SignalState, recentData: SignalDataPoint[]): {
+function estimateBandPowers(state: SignalState): {
   delta: number;
   theta: number;
   alpha: number;

@@ -20,7 +20,7 @@ NOEMA explores how measurable human biosignals such as neural, physiological, an
 - Assistive human-machine interaction
 - Wearable neurotechnology
 - Embedded intelligence
-
+ 
 ## Current Focus
 
 - Concept validation

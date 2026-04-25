@@ -52,6 +52,10 @@ Early-stage research and development.
 
 Detailed implementation methods may remain private during active development.
 
+## Third-Party Credits
+
+Brain anatomical visualization concepts inspired by open-source neuroanatomy resources and modern neuroscience visualization practices.
+
 ---
 
-**NOEMA** - Internal signals, external meaning.
+**NOEMA** — Internal signals, external meaning.

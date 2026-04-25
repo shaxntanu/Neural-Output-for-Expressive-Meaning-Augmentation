@@ -18,14 +18,23 @@ export interface SignalDataPoint {
   frontal: number;
   motor: number;
   temporal: number;
+  occipital: number;
   physiological: number;
 }
 
 export interface Analytics {
   stressIndex: number;
-  focusLevel: number;
+  internalFocus: number;
+  externalVigilance: number;
   signalStability: number;
   noiseRatio: number;
   intentConfidence: number;
   alphaBetaRatio: number;
+  bandPowers: {
+    delta: number;
+    theta: number;
+    alpha: number;
+    beta: number;
+    gamma: number;
+  };
 }

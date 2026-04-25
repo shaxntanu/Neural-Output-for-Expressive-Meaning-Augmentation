@@ -1,27 +1,51 @@
 import { SignalState, SignalDataPoint } from '../types';
 
+// Frequency band definitions
+const BANDS = {
+  delta: { min: 1, max: 4, center: 2.5 },
+  theta: { min: 4, max: 8, center: 6 },
+  alpha: { min: 8, max: 12, center: 10 },
+  beta: { min: 13, max: 30, center: 20 },
+  gamma: { min: 30, max: 45, center: 35 },
+};
+
+// Band power weights for each emotional state (probabilistic tendencies)
+const STATE_BAND_WEIGHTS = {
+  Calm: { delta: 0.1, theta: 0.2, alpha: 0.5, beta: 0.15, gamma: 0.05 },
+  Focused: { delta: 0.05, theta: 0.1, alpha: 0.2, beta: 0.5, gamma: 0.15 },
+  Stressed: { delta: 0.1, theta: 0.15, alpha: 0.1, beta: 0.45, gamma: 0.2 },
+  Fatigued: { delta: 0.2, theta: 0.4, alpha: 0.25, beta: 0.1, gamma: 0.05 },
+  Urgent: { delta: 0.05, theta: 0.1, alpha: 0.1, beta: 0.4, gamma: 0.35 },
+};
+
 export class SignalGenerator {
   private time = 0;
   private blinkTime = -1;
   private jawClenchTime = -1;
+  private phaseOffsets: { [key: string]: number } = {};
+
+  constructor() {
+    // Initialize random phase offsets for each band to add variability
+    Object.keys(BANDS).forEach(band => {
+      this.phaseOffsets[band] = Math.random() * Math.PI * 2;
+    });
+  }
 
   generateSignal(state: SignalState): SignalDataPoint {
     this.time += 0.05;
 
-    const baseFreq = this.getBaseFrequency(state);
-    const amplitude = state.signalStrength / 100;
-    const noise = (state.noiseLevel / 100) * (Math.random() - 0.5) * 2;
-
-    const frontal = this.generateFrontalChannel(state, baseFreq, amplitude, noise);
-    const motor = this.generateMotorChannel(state, baseFreq, amplitude, noise);
-    const temporal = this.generateTemporalChannel(state, baseFreq, amplitude, noise);
-    const physiological = this.generatePhysiologicalChannel(state, baseFreq, amplitude, noise);
+    const frontal = this.generateFrontalChannel(state);
+    const motor = this.generateMotorChannel(state);
+    const temporal = this.generateTemporalChannel(state);
+    const occipital = this.generateOccipitalChannel(state);
+    const physiological = this.generatePhysiologicalChannel(state);
 
     return {
       time: this.time,
       frontal,
       motor,
       temporal,
+      occipital,
       physiological,
     };
   }
@@ -34,96 +58,219 @@ export class SignalGenerator {
     this.jawClenchTime = this.time;
   }
 
-  private getBaseFrequency(state: SignalState): number {
-    switch (state.emotionalState) {
-      case 'Calm': return 10; // Alpha-like
-      case 'Focused': return 20; // Beta-like
-      case 'Stressed': return 25;
-      case 'Fatigued': return 6; // Theta-like
-      case 'Urgent': return 30;
-      default: return 12;
-    }
+  private generateBandMix(
+    weights: { delta: number; theta: number; alpha: number; beta: number; gamma: number },
+    amplitude: number,
+    channelPhaseShift: number = 0
+  ): number {
+    let signal = 0;
+
+    // Generate each frequency band component
+    Object.entries(BANDS).forEach(([bandName, band]) => {
+      const weight = weights[bandName as keyof typeof weights];
+      const freq = band.center;
+      const phase = this.phaseOffsets[bandName] + channelPhaseShift;
+      
+      // Add some frequency jitter for realism
+      const freqJitter = (Math.random() - 0.5) * 0.5;
+      
+      signal += Math.sin(this.time * (freq + freqJitter) + phase) * weight * amplitude;
+    });
+
+    return signal;
   }
 
-  private generateFrontalChannel(state: SignalState, baseFreq: number, amplitude: number, noise: number): number {
-    let signal = Math.sin(this.time * baseFreq) * amplitude;
+  private applyStateBias(
+    baseWeights: { delta: number; theta: number; alpha: number; beta: number; gamma: number },
+    state: SignalState
+  ): { delta: number; theta: number; alpha: number; beta: number; gamma: number } {
+    const stateWeights = STATE_BAND_WEIGHTS[state.emotionalState];
     
-    // Cognitive intent modulation
+    // Blend base weights with state-specific weights
+    return {
+      delta: (baseWeights.delta + stateWeights.delta) / 2,
+      theta: (baseWeights.theta + stateWeights.theta) / 2,
+      alpha: (baseWeights.alpha + stateWeights.alpha) / 2,
+      beta: (baseWeights.beta + stateWeights.beta) / 2,
+      gamma: (baseWeights.gamma + stateWeights.gamma) / 2,
+    };
+  }
+
+  private generateFrontalChannel(state: SignalState): number {
+    const amplitude = state.signalStrength / 100;
+    const noise = (state.noiseLevel / 100) * (Math.random() - 0.5) * 2;
+
+    // Base band mixture
+    let weights = this.applyStateBias(
+      { delta: 0.1, theta: 0.15, alpha: 0.25, beta: 0.35, gamma: 0.15 },
+      state
+    );
+
+    // Cognitive intent modulation (subtle)
     if (state.cognitiveIntent === 'Yes') {
-      signal += Math.sin(this.time * 15) * 0.3 * amplitude;
+      weights.beta += 0.1; // Slight increase in beta for decision confirmation
     } else if (state.cognitiveIntent === 'No') {
-      signal -= Math.sin(this.time * 15) * 0.3 * amplitude;
+      weights.beta -= 0.05; // Slight suppression
     } else if (state.cognitiveIntent === 'Help') {
-      signal += Math.sin(this.time * 25) * 0.5 * amplitude;
+      weights.beta += 0.15;
+      weights.gamma += 0.1; // Urgency-related increase
     }
 
-    // Emotional state effects
-    if (state.emotionalState === 'Stressed') {
-      signal += Math.sin(this.time * 40) * 0.4 * amplitude;
-    } else if (state.emotionalState === 'Calm') {
-      signal *= 0.8;
+    // Normalize weights
+    const total = Object.values(weights).reduce((a, b) => a + b, 0);
+    Object.keys(weights).forEach(key => {
+      weights[key as keyof typeof weights] /= total;
+    });
+
+    let signal = this.generateBandMix(weights, amplitude, 0);
+
+    // Blink artifact (frontal strongest)
+    if (this.time - this.blinkTime < 0.25 && this.time - this.blinkTime > 0) {
+      signal += Math.exp(-(this.time - this.blinkTime) * 15) * 2.5 * amplitude;
     }
 
-    // Blink artifact
-    if (this.time - this.blinkTime < 0.2 && this.time - this.blinkTime > 0) {
-      signal += Math.exp(-(this.time - this.blinkTime) * 20) * 3;
-    }
+    // Add controlled randomness
+    signal += (Math.random() - 0.5) * 0.1 * amplitude;
 
     return signal + noise;
   }
 
-  private generateMotorChannel(state: SignalState, baseFreq: number, amplitude: number, noise: number): number {
-    let signal = Math.sin(this.time * baseFreq * 1.2) * amplitude;
+  private generateMotorChannel(state: SignalState): number {
+    const amplitude = state.signalStrength / 100;
+    const noise = (state.noiseLevel / 100) * (Math.random() - 0.5) * 2;
 
-    // Intent-based lateralization
+    let weights = this.applyStateBias(
+      { delta: 0.1, theta: 0.15, alpha: 0.2, beta: 0.4, gamma: 0.15 },
+      state
+    );
+
+    // Motor imagery lateralization (subtle contralateral bias)
     if (state.cognitiveIntent === 'Left') {
-      signal += Math.sin(this.time * 18) * 0.6 * amplitude;
+      weights.beta += 0.12; // Right motor modulation
     } else if (state.cognitiveIntent === 'Right') {
-      signal += Math.sin(this.time * 22) * 0.6 * amplitude;
+      weights.beta += 0.12; // Left motor modulation
     }
 
-    // Jaw clench artifact
+    // Normalize
+    const total = Object.values(weights).reduce((a, b) => a + b, 0);
+    Object.keys(weights).forEach(key => {
+      weights[key as keyof typeof weights] /= total;
+    });
+
+    let signal = this.generateBandMix(weights, amplitude, Math.PI / 4);
+
+    // Jaw clench artifact (strong EMG contamination)
     if (this.time - this.jawClenchTime < 0.5 && this.time - this.jawClenchTime > 0) {
-      signal += Math.sin(this.time * 80) * Math.exp(-(this.time - this.jawClenchTime) * 5) * 4;
+      const emgFreq = 60 + Math.random() * 40; // Broadband EMG
+      signal += Math.sin(this.time * emgFreq) * Math.exp(-(this.time - this.jawClenchTime) * 4) * 3 * amplitude;
     }
+
+    signal += (Math.random() - 0.5) * 0.1 * amplitude;
 
     return signal + noise;
   }
 
-  private generateTemporalChannel(state: SignalState, baseFreq: number, amplitude: number, noise: number): number {
-    let signal = Math.sin(this.time * baseFreq * 0.9) * amplitude;
+  private generateTemporalChannel(state: SignalState): number {
+    const amplitude = state.signalStrength / 100;
+    const noise = (state.noiseLevel / 100) * (Math.random() - 0.5) * 2;
 
-    // Language/internal processing
+    let weights = this.applyStateBias(
+      { delta: 0.1, theta: 0.2, alpha: 0.25, beta: 0.3, gamma: 0.15 },
+      state
+    );
+
+    // Internal speech / auditory imagery bias
     if (state.cognitiveIntent === 'Help') {
-      signal += Math.sin(this.time * 12) * 0.4 * amplitude;
+      weights.theta += 0.08;
+      weights.beta += 0.08;
     }
 
-    if (state.emotionalState === 'Focused') {
-      signal += Math.sin(this.time * 16) * 0.3 * amplitude;
+    // Normalize
+    const total = Object.values(weights).reduce((a, b) => a + b, 0);
+    Object.keys(weights).forEach(key => {
+      weights[key as keyof typeof weights] /= total;
+    });
+
+    let signal = this.generateBandMix(weights, amplitude, Math.PI / 3);
+
+    // Jaw clench spillover (moderate)
+    if (this.time - this.jawClenchTime < 0.5 && this.time - this.jawClenchTime > 0) {
+      const emgFreq = 65 + Math.random() * 35;
+      signal += Math.sin(this.time * emgFreq) * Math.exp(-(this.time - this.jawClenchTime) * 5) * 1.5 * amplitude;
     }
+
+    signal += (Math.random() - 0.5) * 0.1 * amplitude;
 
     return signal + noise;
   }
 
-  private generatePhysiologicalChannel(state: SignalState, _baseFreq: number, amplitude: number, noise: number): number {
-    let signal = Math.sin(this.time * 1.2) * amplitude; // Heart rate-like
+  private generateOccipitalChannel(state: SignalState): number {
+    const amplitude = state.signalStrength / 100;
+    const noise = (state.noiseLevel / 100) * (Math.random() - 0.5) * 2;
 
-    // Eyes closed increases alpha
+    let weights = this.applyStateBias(
+      { delta: 0.08, theta: 0.12, alpha: 0.5, beta: 0.2, gamma: 0.1 },
+      state
+    );
+
+    // Eyes closed dramatically increases alpha (most robust effect)
     if (state.eyeState === 'Closed') {
-      signal += Math.sin(this.time * 10) * 0.5 * amplitude;
+      weights.alpha += 0.3;
+      weights.beta -= 0.1;
+    } else {
+      // Eyes open suppresses alpha
+      weights.alpha -= 0.15;
+      weights.beta += 0.05;
     }
 
-    // Stress increases variability
+    // Normalize
+    const total = Object.values(weights).reduce((a, b) => a + b, 0);
+    Object.keys(weights).forEach(key => {
+      weights[key as keyof typeof weights] /= total;
+    });
+
+    let signal = this.generateBandMix(weights, amplitude, Math.PI / 2);
+
+    signal += (Math.random() - 0.5) * 0.1 * amplitude;
+
+    return signal + noise;
+  }
+
+  private generatePhysiologicalChannel(state: SignalState): number {
+    const amplitude = state.signalStrength / 100;
+    const noise = (state.noiseLevel / 100) * (Math.random() - 0.5) * 2;
+
+    // Pulse-like rhythm (heart rate approximation)
+    const pulseRate = state.emotionalState === 'Stressed' || state.emotionalState === 'Urgent' ? 1.3 : 1.0;
+    let signal = Math.sin(this.time * pulseRate) * amplitude * 0.8;
+
+    // Arousal modulation
+    let weights = this.applyStateBias(
+      { delta: 0.15, theta: 0.2, alpha: 0.3, beta: 0.25, gamma: 0.1 },
+      state
+    );
+
+    // Stress increases high-frequency variability
     if (state.emotionalState === 'Stressed') {
-      signal += Math.sin(this.time * 35) * 0.6 * amplitude;
+      weights.beta += 0.15;
+      weights.gamma += 0.1;
+    } else if (state.emotionalState === 'Urgent') {
+      weights.beta += 0.2;
+      weights.gamma += 0.15;
     } else if (state.emotionalState === 'Calm') {
-      signal *= 0.7;
+      weights.alpha += 0.15;
+      weights.delta += 0.05;
     }
 
-    // Urgent state
-    if (state.emotionalState === 'Urgent') {
-      signal += Math.sin(this.time * 45) * 0.8 * amplitude;
-    }
+    // Normalize
+    const total = Object.values(weights).reduce((a, b) => a + b, 0);
+    Object.keys(weights).forEach(key => {
+      weights[key as keyof typeof weights] /= total;
+    });
+
+    signal += this.generateBandMix(weights, amplitude * 0.5, Math.PI);
+
+    signal += (Math.random() - 0.5) * 0.15 * amplitude;
 
     return signal + noise;
   }
@@ -132,5 +279,9 @@ export class SignalGenerator {
     this.time = 0;
     this.blinkTime = -1;
     this.jawClenchTime = -1;
+    // Regenerate phase offsets for new randomness
+    Object.keys(BANDS).forEach(band => {
+      this.phaseOffsets[band] = Math.random() * Math.PI * 2;
+    });
   }
 }

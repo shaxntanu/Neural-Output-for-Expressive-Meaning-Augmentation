@@ -10,6 +10,7 @@ import { BrainVisualization } from './components/BrainVisualization';
 import { PresetPanel } from './components/PresetPanel';
 import { DisclaimerPanel } from './components/DisclaimerPanel';
 import { ExportPanel } from './components/ExportPanel';
+import { ReferencesPanel } from './components/ReferencesPanel';
 import { Brain } from 'lucide-react';
 
 const MAX_DATA_POINTS = 100;
@@ -29,11 +30,19 @@ function App() {
   const [signalData, setSignalData] = useState<SignalDataPoint[]>([]);
   const [analytics, setAnalytics] = useState<Analytics>({
     stressIndex: 0,
-    focusLevel: 0,
+    internalFocus: 0,
+    externalVigilance: 0,
     signalStability: 0,
     noiseRatio: 0,
     intentConfidence: 0,
     alphaBetaRatio: 0,
+    bandPowers: {
+      delta: 0,
+      theta: 0,
+      alpha: 0,
+      beta: 0,
+      gamma: 0,
+    },
   });
 
   const generatorRef = useRef(new SignalGenerator());
@@ -162,6 +171,12 @@ function App() {
               />
               <SignalChart
                 data={signalData}
+                title="Occipital Channel"
+                dataKey="occipital"
+                color="#EC4899"
+              />
+              <SignalChart
+                data={signalData}
                 title="Physiological Channel"
                 dataKey="physiological"
                 color="#F59E0B"
@@ -173,6 +188,9 @@ function App() {
               <BrainVisualization state={state} />
               <ExplanationPanel state={state} />
             </div>
+
+            {/* References Section */}
+            <ReferencesPanel />
           </div>
         </div>
       </main>

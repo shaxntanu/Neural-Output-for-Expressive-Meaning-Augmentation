@@ -12,6 +12,7 @@
 NOEMA/
 ├── README.md                          # Main project overview
 ├── LICENSE                            # MIT License
+├── .gitignore                         # Git ignore rules (.vscode, logs, OS files)
 │
 ├── docs/                              # Documentation
 │   ├── architecture.md                # System architecture design
@@ -23,6 +24,7 @@ NOEMA/
 │   ├── simulation-refactor-summary.md # Refactor documentation
 │   ├── timelines.md                   # Project timeline
 │   └── meeting-notes/                 # Meeting documentation
+│       └── PROJECT_STRUCTURE.md       # This comprehensive structure doc
 │
 ├── research/                          # Research materials
 │   ├── hypotheses.md                  # Research hypotheses
@@ -30,14 +32,47 @@ NOEMA/
 │   ├── papers/                        # Research papers
 │   └── summaries/                     # Paper summaries
 │
-├── hardware/                          # Hardware designs
+├── hardware/                          # Physical hardware designs
 │   ├── block-diagrams/                # System block diagrams
 │   ├── circuits/                      # Circuit schematics
 │   ├── pcb/                           # PCB designs
 │   ├── bom/                           # Bill of materials
 │   └── enclosure/                     # Enclosure designs
 │
-├── firmware/                          # Embedded firmware
+├── hardware-simulation/               # 🆕 Hardware Simulation Lab
+│   ├── README.md                      # Hardware sim documentation
+│   │
+│   ├── docs/                          # Simulation documentation
+│   │   ├── architecture.md            # Simulation architecture
+│   │   ├── data-flow.md               # Data flow diagrams
+│   │   └── future-hardware-mapping.md # Hardware integration plans
+│   │
+│   ├── python-signal-lab/             # Python signal processing lab
+│   │   ├── main.py                    # Main entry point
+│   │   ├── signal_generator.py        # Synthetic signal generation
+│   │   ├── filters.py                 # Digital filters (bandpass, notch)
+│   │   ├── command_patterns.py        # Command detection patterns
+│   │   ├── visualizer.py              # Real-time visualization
+│   │   ├── requirements.txt           # Python dependencies
+│   │   └── outputs/                   # Generated plots and logs
+│   │
+│   ├── embedded-core/                 # C++ embedded core logic
+│   │   ├── noema_core.h               # Core header
+│   │   ├── noema_core.cpp             # Core implementation
+│   │   ├── commands.h                 # Command definitions
+│   │   └── test_main.cpp              # Test harness
+│   │
+│   ├── esp32-firmware/                # ESP32 firmware prototype
+│   │   ├── noema_esp32.ino            # Arduino sketch
+│   │   ├── config.h                   # Configuration
+│   │   ├── display.h/cpp              # Display driver
+│   │   └── serial_input.h/cpp         # Serial communication
+│   │
+│   └── datasets/                      # Simulation datasets
+│       ├── synthetic/                 # Synthetic test data
+│       └── logs/                      # Experiment logs
+│
+├── firmware/                          # Production embedded firmware
 │   ├── esp32/                         # ESP32 firmware
 │   ├── sensors/                       # Sensor drivers
 │   └── data-logging/                  # Data logging code
@@ -48,7 +83,7 @@ NOEMA/
 │   ├── training/                      # Training scripts
 │   └── dashboard/                     # Dashboard application
 │
-├── datasets/                          # Data storage
+├── datasets/                          # Real data storage
 │   ├── raw/                           # Raw signal data
 │   ├── processed/                     # Processed data
 │   ├── labels/                        # Data labels
@@ -102,6 +137,38 @@ NOEMA/
     │
     └── dist/                          # Build output (generated)
 ```
+
+---
+
+## 🆕 Hardware Simulation Lab
+
+### Purpose
+Bridge the gap between web simulation and real hardware by creating a Python/C++ environment that mimics embedded signal processing.
+
+### Components
+
+#### 1. **Python Signal Lab** (`python-signal-lab/`)
+- **signal_generator.py**: Multi-channel synthetic EEG generation
+- **filters.py**: Bandpass, notch, and artifact removal filters
+- **command_patterns.py**: Pattern matching for command detection
+- **visualizer.py**: Real-time matplotlib visualization
+- **main.py**: Orchestrates signal flow and testing
+
+**Tech Stack**: NumPy, SciPy, Matplotlib, Python 3.x
+
+#### 2. **Embedded Core** (`embedded-core/`)
+- **noema_core.cpp**: Core C++ logic for signal processing
+- **commands.h**: Command definitions and thresholds
+- **test_main.cpp**: Unit testing framework
+
+**Purpose**: Validate algorithms that will run on microcontrollers
+
+#### 3. **ESP32 Firmware** (`esp32-firmware/`)
+- **noema_esp32.ino**: Arduino-compatible firmware
+- **display.cpp**: OLED/LCD display driver
+- **serial_input.cpp**: Serial communication for testing
+
+**Purpose**: Prototype firmware for ESP32 development boards
 
 ---
 
@@ -200,6 +267,7 @@ The signal generator implements scientifically-grounded rules:
 
 ## Data Flow
 
+### Web Simulation Flow
 ```
 User Input (Controls)
     ↓
@@ -216,6 +284,23 @@ Signal Data Points (100 point buffer)
 Analytics Calculation
     ↓
 Visualization Updates (Charts, Brain, Metrics)
+```
+
+### Hardware Simulation Flow
+```
+Python Signal Generator
+    ↓
+Digital Filtering (Bandpass, Notch)
+    ↓
+Feature Extraction
+    ↓
+Command Pattern Matching
+    ↓
+C++ Core Validation
+    ↓
+ESP32 Firmware Testing
+    ↓
+Real-time Visualization
 ```
 
 ---
@@ -247,11 +332,15 @@ The simulation is based on established neuroscience literature:
 - ✅ Real-time analytics
 - ✅ Scientific references integration
 - ✅ State-driven signal modulation
+- ✅ Hardware simulation lab (Python + C++ + ESP32)
+- ✅ Digital filtering pipeline
+- ✅ Command pattern detection
 
 **In Progress**:
 - 🔄 Hardware sensor stack selection
 - 🔄 Prototype planning
 - 🔄 Experimental framework design
+- 🔄 ESP32 firmware development
 
 **Planned**:
 - 📋 Real EEG data collection
